@@ -1,0 +1,9 @@
+.editable {
+    display: flex;
+    flax-direction: column;
+    justify-content: center;
+}
+
+.readonly {
+    
+}
