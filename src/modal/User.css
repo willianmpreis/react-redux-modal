@@ -1,9 +1,10 @@
 .editable {
     display: flex;
-    flax-direction: column;
-    justify-content: center;
+    flex-direction: column;
+    max-width: 300px;
+    align-items: center;
 }
 
-.readonly {
-    
+.editable button, .editable input{
+    width: 100%;
 }

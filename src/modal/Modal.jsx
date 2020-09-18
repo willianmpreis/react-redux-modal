@@ -1,6 +1,10 @@
 import React from 'react';
 import Modal from 'react-modal';
 import User from './User';
+
+import * as UsersActions from '../store/actions/users'
+
+import { useSelector, useDispatch } from 'react-redux'
  
 const customStyles = {
   content : {
@@ -17,12 +21,35 @@ const customStyles = {
 Modal.setAppElement('#root')
  
 export default (props) => {
+
   var subtitle;
   const [modalIsOpen,setIsOpen] = React.useState(false);
-  const [userSelected, selectUser] = React.useState({});
   const [editable, setEditable] = React.useState(false);
-  const [users, setUsers] = React.useState(props.users || []);
   
+  const userSelected = useSelector(state => state.userSelected)
+  const users = useSelector(state => state.users)
+  const dispatch = useDispatch()
+
+  function managerUser(user, action ='add') {
+    let type
+    switch (action) {
+      case 'add':
+        type = 'ADD_USER'
+        break
+      case 'set':
+        type = 'SET_USER'
+        break
+      default:
+        type = 'ADD_USER'
+    }
+    dispatch(
+        { 
+            type,
+            user
+        }
+    )
+  }
+    
   function openModal() {
     setIsOpen(true);
   }
@@ -37,9 +64,11 @@ export default (props) => {
   }
 
   const changeUsers = (user) => {
-    const newUsers = props.users.map(u => { return u.id === user.id ? user : u })
-    console.log('changeUsers', user, props.users, newUsers)
-    setUsers(newUsers)
+    managerUser(user, 'set')
+  }
+
+  const selectUser = (user) => {
+    dispatch(UsersActions.selectUser(user))
   }
 
   return (
@@ -55,13 +84,14 @@ export default (props) => {
 
       <div style={ {border: '1px solid', padding: '20px'} }>
         <h2 ref={_subtitle => (subtitle = _subtitle)}>Modal</h2>
-        <User {...userSelected} 
+        <User
           editable={editable}
           onSave={changeUsers} 
         />
         <button onClick={closeModal}>Close</button>
       </div>
       </Modal>
+      <button type="button" className="mb-2" onClick={ () => {console.log(users, userSelected)} } >Exibir State</button>
     </div>
   );
 }
